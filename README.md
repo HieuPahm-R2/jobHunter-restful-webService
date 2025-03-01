@@ -2,8 +2,8 @@
 
 ### TechStack in use:
 For further reference, please consider the following sections:
-* [Spring Boot Gradle Plugin Reference Guide
-* [Create an OCI image
+* Spring Boot Gradle Plugin Reference Guide
+* Create an OCI image
 * [Spring Boot DevTools]
 * [Spring Boot Actuator]
 * [Spring Web]

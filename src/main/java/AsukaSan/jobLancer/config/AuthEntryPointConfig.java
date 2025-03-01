@@ -1,6 +1,7 @@
 package AsukaSan.jobLancer.config;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
@@ -33,7 +34,12 @@ public class AuthEntryPointConfig implements AuthenticationEntryPoint {
 
         RestResponse<Object> res = new RestResponse<>();
         res.setStatusCode(HttpStatus.UNAUTHORIZED.value());
-        res.setError(authException.getCause().getMessage());
+        // handle error NULL value when not send anything
+        String errorMess = Optional.ofNullable(authException.getCause())
+                    .map(Throwable::getMessage)
+                    .orElse(authException.getMessage());
+
+        res.setError(errorMess);
         res.setMessage("Token không hợp lệ !! (có thể do sai định dạng hoặc hết hạn)");
         mapper.writeValue(response.getWriter(), res);
     }
