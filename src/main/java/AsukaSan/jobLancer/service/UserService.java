@@ -3,6 +3,8 @@ package AsukaSan.jobLancer.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import AsukaSan.jobLancer.domain.User;
@@ -25,8 +27,9 @@ public class UserService {
         }
         return null;
     }
-    public List<User> fetchAllUsers(){
-        return this.userRepository.findAll();
+    public List<User> fetchAllUsers(Pageable pageable){
+        Page<User> pageCheck = this.userRepository.findAll(pageable);
+        return pageCheck.getContent();
     }
     public void deleteUserById(long id){
         this.userRepository.deleteById(id);

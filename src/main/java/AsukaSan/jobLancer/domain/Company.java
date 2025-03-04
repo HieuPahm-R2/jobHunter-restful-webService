@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -43,6 +44,12 @@ public class Company {
 
     @PrePersist
     public void handleBeforeCreate() {
+        this.createdBy = SecurityUtils.getCurrentUserLogin().isPresent() == true ?
+        SecurityUtils.getCurrentUserLogin().get() : " ";
+        this.createdTime = Instant.now();
+    }
+    @PreUpdate
+    public void handleBeforeUpdate() {
         this.createdBy = SecurityUtils.getCurrentUserLogin().isPresent() == true ?
         SecurityUtils.getCurrentUserLogin().get() : " ";
         this.createdTime = Instant.now();
