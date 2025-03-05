@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import AsukaSan.jobLancer.domain.RestResponse;
+import AsukaSan.jobLancer.utils.anotation.MessageApi;
 import jakarta.servlet.http.HttpServletResponse;
 
 @ControllerAdvice
@@ -21,8 +22,9 @@ public class FormatRestResponse implements ResponseBodyAdvice {
     }
 
     @Override
-    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
-            Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+    public Object beforeBodyWrite(Object body,
+    MethodParameter returnType, MediaType selectedContentType,
+    Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         HttpServletResponse servletResponse = ((ServletServerHttpResponse) response).getServletResponse();
         int status = servletResponse.getStatus();
         RestResponse<Object> res = new RestResponse<>();
@@ -34,8 +36,10 @@ public class FormatRestResponse implements ResponseBodyAdvice {
         if(status >= 400){
             return body;
         }else{
-            res.setMessage("API HAS SUCCESSFULLY CALLED");
             res.setData(body);
+            //set api annotation response
+            MessageApi mess = returnType.getMethodAnnotation(MessageApi.class);
+            res.setMessage(mess != null ? mess.value() : "API HAS BEEN SUCCESSFULLY CALLED");
         }
         return res;
     }

@@ -1,10 +1,10 @@
 package AsukaSan.jobLancer.controller;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,8 +17,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.turkraft.springfilter.boot.Filter;
+
 import AsukaSan.jobLancer.domain.User;
+import AsukaSan.jobLancer.domain.dto.PaginationResultDTO;
 import AsukaSan.jobLancer.service.UserService;
+import AsukaSan.jobLancer.utils.anotation.MessageApi;
 import AsukaSan.jobLancer.utils.error.IdInvalidException;
 
 @RestController
@@ -53,16 +57,12 @@ public class UserController {
         return ResponseEntity.ok("Delete successfully");
     }
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsersInfo(
-        @RequestParam("currentPage") Optional<String> currentOptional,
-        @RequestParam("pageSize") Optional<String> pageSizeOptional
+    @MessageApi("Fetch All Users action")
+    public ResponseEntity<PaginationResultDTO> getAllUsersInfo(
+        @Filter Specification<User> spec,
+        Pageable pageable
     ){
-        String sCurrent = currentOptional.isPresent() ? currentOptional.get() : "";
-        String sPageSize = pageSizeOptional.isPresent() ? pageSizeOptional.get() : "";
-        int currentPage = Integer.parseInt(sCurrent);
-        int pageSize = Integer.parseInt(sPageSize);
-        Pageable pageable = PageRequest.of(currentPage - 1,pageSize);
-        return ResponseEntity.status(HttpStatus.OK).body(this.userService.fetchAllUsers(pageable)) ;
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.fetchAllUsers(spec,pageable)) ;
     }
     @PutMapping("/users")
     public ResponseEntity<User> getUpdateUserInfo(@RequestBody User userFromPostMan){
