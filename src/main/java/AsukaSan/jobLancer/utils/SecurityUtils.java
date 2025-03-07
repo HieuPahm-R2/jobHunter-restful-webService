@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import com.nimbusds.jose.util.Base64;
 
+import AsukaSan.jobLancer.domain.dto.ResponseLoginDTO;
+
 @Service
 public class SecurityUtils {
     private final JwtEncoder jwtEncoder;
@@ -33,13 +35,15 @@ public class SecurityUtils {
     private String jwtKey;
 
     @Value("${hieupham.jwt.access-token-validity-in-seconds}")
-    private long jwtExpiration;
+    private long accessTokenExpire;
+    @Value("${hieupham.jwt.refresh-token-validity-in-seconds}")
+    private long refreshTokenExpire;
 
    
 
-    public String generateToken(Authentication authentication){
+    public String generateAccessToken(Authentication authentication){
         Instant now = Instant.now();
-        Instant validity = now.plus(this.jwtExpiration, ChronoUnit.SECONDS);
+        Instant validity = now.plus(this.accessTokenExpire, ChronoUnit.SECONDS);
  
         // @formatter:off
         JwtClaimsSet claims = JwtClaimsSet.builder()
@@ -51,6 +55,22 @@ public class SecurityUtils {
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
     }
+
+    public String generateRefreshToken(String email, ResponseLoginDTO dataDto){
+        Instant now = Instant.now();
+        Instant validity = now.plus(this.refreshTokenExpire, ChronoUnit.SECONDS);
+ 
+        // @formatter:off
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+        .issuedAt(now)
+        .expiresAt(validity)
+        .subject(email)
+        .claim("user", dataDto.getUser())
+        .build();
+        JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
+        return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
+    }
+
      /**
      * Get the login of the current user.
      *
