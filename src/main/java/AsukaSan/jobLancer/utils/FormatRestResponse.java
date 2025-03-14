@@ -8,7 +8,7 @@ import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import AsukaSan.jobLancer.domain.RestResponse;
+import AsukaSan.jobLancer.domain.response.RestResponse;
 import AsukaSan.jobLancer.utils.anotation.MessageApi;
 import jakarta.servlet.http.HttpServletResponse;
 

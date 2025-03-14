@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import AsukaSan.jobLancer.domain.Company;
-import AsukaSan.jobLancer.domain.dto.PaginationResultDTO;
+import AsukaSan.jobLancer.domain.response.PaginationResultDTO;
 import AsukaSan.jobLancer.service.CompanyService;
 import jakarta.validation.Valid;
 

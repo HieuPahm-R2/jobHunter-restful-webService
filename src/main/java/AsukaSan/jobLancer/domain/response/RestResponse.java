@@ -1,4 +1,4 @@
-package AsukaSan.jobLancer.domain;
+package AsukaSan.jobLancer.domain.response;
 
 public class RestResponse<T> {
     private int statusCode;

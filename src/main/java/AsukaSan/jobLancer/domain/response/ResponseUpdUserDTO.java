@@ -1,4 +1,4 @@
-package AsukaSan.jobLancer.domain.dto;
+package AsukaSan.jobLancer.domain.response;
 
 import java.time.Instant;
 
@@ -8,8 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ResponseCreUserDTO {
-
+public class ResponseUpdUserDTO {
     private long id;
     private String name;
     private String email;

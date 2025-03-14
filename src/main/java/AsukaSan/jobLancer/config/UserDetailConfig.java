@@ -1,4 +1,4 @@
-package AsukaSan.jobLancer.service;
+package AsukaSan.jobLancer.config;
 
 import java.util.Collections;
 
@@ -9,10 +9,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+import AsukaSan.jobLancer.service.UserService;
+
 @Component("userDetailsService")
-public class UserDetailCustom implements UserDetailsService {
+public class UserDetailConfig implements UserDetailsService {
     private final UserService userService;
-    public UserDetailCustom(UserService userService){
+    public UserDetailConfig(UserService userService){
         this.userService = userService;
     }
 

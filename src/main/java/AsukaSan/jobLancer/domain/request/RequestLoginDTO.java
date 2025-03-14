@@ -1,8 +1,8 @@
-package AsukaSan.jobLancer.domain.dto;
+package AsukaSan.jobLancer.domain.request;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class LoginDTO {
+public class RequestLoginDTO {
     @NotBlank(message = "username not be blank")
     private String username;
     @NotBlank(message = "mật khẩu không được để trống")

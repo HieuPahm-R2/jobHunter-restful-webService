@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.turkraft.springfilter.boot.Filter;
 
 import AsukaSan.jobLancer.domain.User;
-import AsukaSan.jobLancer.domain.dto.PaginationResultDTO;
-import AsukaSan.jobLancer.domain.dto.ResponseCreUserDTO;
-import AsukaSan.jobLancer.domain.dto.ResponseUpdUserDTO;
-import AsukaSan.jobLancer.domain.dto.ResponseUserDTO;
+import AsukaSan.jobLancer.domain.response.PaginationResultDTO;
+import AsukaSan.jobLancer.domain.response.ResponseCreUserDTO;
+import AsukaSan.jobLancer.domain.response.ResponseUpdUserDTO;
+import AsukaSan.jobLancer.domain.response.ResponseUserDTO;
 import AsukaSan.jobLancer.service.UserService;
 import AsukaSan.jobLancer.utils.anotation.MessageApi;
 import AsukaSan.jobLancer.utils.error.IdInvalidException;

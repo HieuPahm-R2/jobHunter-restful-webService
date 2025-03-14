@@ -10,11 +10,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import AsukaSan.jobLancer.domain.User;
-import AsukaSan.jobLancer.domain.dto.Meta;
-import AsukaSan.jobLancer.domain.dto.PaginationResultDTO;
-import AsukaSan.jobLancer.domain.dto.ResponseCreUserDTO;
-import AsukaSan.jobLancer.domain.dto.ResponseUpdUserDTO;
-import AsukaSan.jobLancer.domain.dto.ResponseUserDTO;
+import AsukaSan.jobLancer.domain.response.PaginationResultDTO;
+import AsukaSan.jobLancer.domain.response.ResponseCreUserDTO;
+import AsukaSan.jobLancer.domain.response.ResponseUpdUserDTO;
+import AsukaSan.jobLancer.domain.response.ResponseUserDTO;
 import AsukaSan.jobLancer.repository.UserRepository;
 
 @Service
@@ -38,7 +37,7 @@ public class UserService {
     public PaginationResultDTO fetchAllUsers(Specification<User> spec,Pageable pageable){
         Page<User> pageCheck = this.userRepository.findAll(spec, pageable);
         PaginationResultDTO res = new PaginationResultDTO();
-        Meta mt = new Meta();
+        PaginationResultDTO.Meta mt = new PaginationResultDTO.Meta();
         mt.setPage(pageCheck.getNumber() + 1);
         mt.setPageSize(pageCheck.getSize());
         mt.setPages(pageCheck.getTotalPages());
@@ -127,5 +126,8 @@ public class UserService {
             currentUser.setRefreshToken(token);
             this.userRepository.save(currentUser);
         }
+    }
+    public User fetchUserByRefreshTokenAndEmail(String token, String email){
+        return this.userRepository.findByRefreshTokenAndEmail(token, email);
     }
 }

@@ -1,4 +1,6 @@
-package AsukaSan.jobLancer.domain.dto;
+package AsukaSan.jobLancer.domain.response;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +10,9 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ResponseLoginDTO {
+    @JsonProperty("access_token")
     private String accessToken;
+    
     private LoginUser user;
 
     @Getter
@@ -19,5 +23,13 @@ public class ResponseLoginDTO {
         private long id;
         private String email;
         private String name;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class GetAccountUser {
+        private LoginUser user;
     }
 }

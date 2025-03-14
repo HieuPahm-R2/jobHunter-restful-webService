@@ -9,8 +9,7 @@ import org.springframework.stereotype.Service;
 
 import AsukaSan.jobLancer.domain.Company;
 import AsukaSan.jobLancer.domain.User;
-import AsukaSan.jobLancer.domain.dto.Meta;
-import AsukaSan.jobLancer.domain.dto.PaginationResultDTO;
+import AsukaSan.jobLancer.domain.response.PaginationResultDTO;
 import AsukaSan.jobLancer.repository.CompanyRepository;
 
 @Service
@@ -27,7 +26,7 @@ public class CompanyService {
     public PaginationResultDTO fetchAllCompanies(Pageable pageable){
         Page<Company> pageCheck = this.companyRepository.findAll(pageable);
         PaginationResultDTO res = new PaginationResultDTO();
-        Meta mt = new Meta();
+        PaginationResultDTO.Meta mt = new PaginationResultDTO.Meta();
         mt.setPage(pageCheck.getNumber() + 1);
         mt.setPageSize(pageCheck.getSize());
         mt.setPages(pageCheck.getTotalPages());

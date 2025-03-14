@@ -1,4 +1,4 @@
-package AsukaSan.jobLancer.domain.dto;
+package AsukaSan.jobLancer.domain.response;
 
 import java.time.Instant;
 
