@@ -18,4 +18,12 @@ public class ResponseCreUserDTO {
     private String address;
     private String refreshToken;
     private Instant createdTime;
+    private UserOfCompany company;
+
+    @Getter
+    @Setter
+    public static class UserOfCompany{
+        private long id;
+        private String name;
+    }
 }

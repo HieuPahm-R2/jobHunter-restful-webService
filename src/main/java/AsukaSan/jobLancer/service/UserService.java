@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import AsukaSan.jobLancer.domain.Company;
 import AsukaSan.jobLancer.domain.User;
 import AsukaSan.jobLancer.domain.response.PaginationResultDTO;
 import AsukaSan.jobLancer.domain.response.ResponseCreUserDTO;
@@ -20,10 +21,16 @@ import AsukaSan.jobLancer.repository.UserRepository;
 public class UserService {
     // DI
     private final UserRepository userRepository;
-    public UserService(UserRepository userRepository){
+    private final CompanyService companyService;
+    public UserService(UserRepository userRepository, CompanyService companyService){
         this.userRepository = userRepository;
+        this.companyService = companyService;
     }
     public User handleCreateUser(User user){
+        if(user.getCompany() != null){
+            Optional<Company> comOptional = this.companyService.findCompanyById(user.getCompany().getId());
+            user.setCompany(comOptional.isPresent() ? comOptional.get() : null);
+        }
         return this.userRepository.save(user);
     }
     public User fetchUserById(long id){
@@ -53,11 +60,17 @@ public class UserService {
                     item.getAddress(),
                     item.getAge(),
                     item.getUpdatedTime(),
-                    item.getCreatedTime()))
+                    item.getCreatedTime(),
+                    new ResponseUserDTO.UserOfCompany(
+                        item.getCompany() != null ? item.getCompany().getId() : 0,
+                        item.getCompany() != null ? item.getCompany().getName() : null
+                    )
+                    ))
                 .collect(Collectors.toList());
         res.setResult(listUser);
         return res;
     }
+    
     public void deleteUserById(long id){
         this.userRepository.deleteById(id);
     }
@@ -71,9 +84,15 @@ public class UserService {
             currentUser.setAge(reUser.getAge());
             //save to update
             currentUser = this.userRepository.save(currentUser);
+            //Is the company still alive
+            if(reUser.getCompany() != null){
+                Optional<Company> comOptional = this.companyService.findCompanyById(reUser.getId());
+                reUser.setCompany(comOptional.isPresent() ? comOptional.get() : null);
+            }
         }
         return currentUser;
     }
+    
     public User handleGetUserByUsername(String username){
         return this.userRepository.findByEmail(username);
     }
@@ -87,6 +106,7 @@ public class UserService {
 
     public ResponseCreUserDTO convertToResCreUserDTO(User user){
         ResponseCreUserDTO res = new ResponseCreUserDTO();
+        ResponseCreUserDTO.UserOfCompany userRoot = new ResponseCreUserDTO.UserOfCompany();
         res.setId(user.getId());
         res.setEmail(user.getEmail());
         res.setName(user.getName());
@@ -94,9 +114,16 @@ public class UserService {
         res.setCreatedTime(user.getCreatedTime());
         res.setGender(user.getGender());
         res.setAddress(user.getAddress());
+        if(user.getCompany() != null){
+            userRoot.setId(user.getCompany().getId());
+            userRoot.setName(user.getCompany().getName());
+            res.setCompany(userRoot);
+        }
         return res;
     }
+    
     public ResponseUpdUserDTO convertToResUpdUserDTO(User user){
+        ResponseUpdUserDTO.UserOfCompany userEdit = new ResponseUpdUserDTO.UserOfCompany();
         ResponseUpdUserDTO res = new ResponseUpdUserDTO();
         res.setId(user.getId());
         res.setEmail(user.getEmail());
@@ -105,11 +132,22 @@ public class UserService {
         res.setCreatedTime(user.getCreatedTime());
         res.setGender(user.getGender());
         res.setAddress(user.getAddress());
+        if(user.getCompany() != null){
+            userEdit.setId(user.getCompany().getId());
+            userEdit.setName(user.getCompany().getName());
+            res.setCompany(userEdit);
+        }
         return res;
     }
     
     public ResponseUserDTO convertToUserDTO(User user){
         ResponseUserDTO res = new ResponseUserDTO();
+        ResponseUserDTO.UserOfCompany userRoot = new ResponseUserDTO.UserOfCompany();
+        if(user.getCompany() != null){
+            userRoot.setId(user.getCompany().getId());
+            userRoot.setName(user.getCompany().getName());
+            res.setCompany(userRoot);
+        }
         res.setId(user.getId());
         res.setEmail(user.getEmail());
         res.setName(user.getName());

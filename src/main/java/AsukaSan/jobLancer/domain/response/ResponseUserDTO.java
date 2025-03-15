@@ -2,6 +2,7 @@ package AsukaSan.jobLancer.domain.response;
 
 import java.time.Instant;
 
+import AsukaSan.jobLancer.domain.response.ResponseCreUserDTO.UserOfCompany;
 import AsukaSan.jobLancer.utils.constant.GenderEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,4 +22,14 @@ public class ResponseUserDTO {
     private int age;
     private Instant updatedTime;
     private Instant createdTime;
+    private UserOfCompany company;
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserOfCompany{
+        private long id;
+        private String name;
+    }
 }
