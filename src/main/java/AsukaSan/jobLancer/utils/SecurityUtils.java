@@ -45,7 +45,13 @@ public class SecurityUtils {
 
    
 
-    public String generateAccessToken(String email, ResponseLoginDTO.LoginUser dto){
+    public String generateAccessToken(String email, ResponseLoginDTO dto){
+        // assign to claim
+        ResponseLoginDTO.UserInfoInsideToken tokenUser = new ResponseLoginDTO.UserInfoInsideToken();
+        tokenUser.setId(dto.getUser().getId());
+        tokenUser.setEmail(dto.getUser().getEmail());
+        tokenUser.setName(dto.getUser().getName());
+
         Instant now = Instant.now();
         Instant validity = now.plus(this.accessTokenExpire, ChronoUnit.SECONDS);
  
@@ -54,22 +60,28 @@ public class SecurityUtils {
         .issuedAt(now)
         .expiresAt(validity)
         .subject(email)
-        .claim("user account", dto)
+        .claim("user account", tokenUser)
         .build();
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
     }
 
     public String generateRefreshToken(String email, ResponseLoginDTO dataDto){
+        ResponseLoginDTO.UserInfoInsideToken tokenUser = new ResponseLoginDTO.UserInfoInsideToken();
+        tokenUser.setId(dataDto.getUser().getId());
+        tokenUser.setEmail(dataDto.getUser().getEmail());
+        tokenUser.setName(dataDto.getUser().getName());
+
         Instant now = Instant.now();
         Instant validity = now.plus(this.refreshTokenExpire, ChronoUnit.SECONDS);
+
  
         // @formatter:off
         JwtClaimsSet claims = JwtClaimsSet.builder()
         .issuedAt(now)
         .expiresAt(validity)
         .subject(email)
-        .claim("user", dataDto.getUser())
+        .claim("user", tokenUser)
         .build();
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();

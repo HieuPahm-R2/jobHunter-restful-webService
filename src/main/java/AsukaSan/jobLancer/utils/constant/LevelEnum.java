@@ -1,5 +1,5 @@
 package AsukaSan.jobLancer.utils.constant;
 
 public enum LevelEnum {
-    INTERN, FRESH, JUNIOR, MIDDLE, SENIOR, TechLead
+    INTERN, FRESHER, JUNIOR, MIDDLE, SENIOR;
 }

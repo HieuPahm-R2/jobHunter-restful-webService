@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import AsukaSan.jobLancer.config.JWTConfiguration;
 import AsukaSan.jobLancer.domain.Company;
@@ -30,14 +31,16 @@ public class CompanyService {
     public Company handleCreateCompany(Company company){
         return this.companyRepository.save(company);
     }
-    public PaginationResultDTO fetchAllCompanies(Pageable pageable){
-        Page<Company> pageCheck = this.companyRepository.findAll(pageable);
+    public PaginationResultDTO fetchAllCompanies(Specification<Company> spec, Pageable pageable){
+        Page<Company> pageCheck = this.companyRepository.findAll(spec,pageable);
         PaginationResultDTO res = new PaginationResultDTO();
         PaginationResultDTO.Meta mt = new PaginationResultDTO.Meta();
+
         mt.setPage(pageCheck.getNumber() + 1);
         mt.setPageSize(pageCheck.getSize());
         mt.setPages(pageCheck.getTotalPages());
         mt.setTotal(pageCheck.getTotalElements());
+
         res.setMeta(mt);
         res.setResult(pageCheck.getContent());
         return res;

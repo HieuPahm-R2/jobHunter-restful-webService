@@ -10,11 +10,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import AsukaSan.jobLancer.domain.Company;
+import AsukaSan.jobLancer.domain.Role;
 import AsukaSan.jobLancer.domain.User;
 import AsukaSan.jobLancer.domain.response.PaginationResultDTO;
-import AsukaSan.jobLancer.domain.response.ResponseCreUserDTO;
-import AsukaSan.jobLancer.domain.response.ResponseUpdUserDTO;
-import AsukaSan.jobLancer.domain.response.ResponseUserDTO;
+import AsukaSan.jobLancer.domain.response.Client.ResponseCreUserDTO;
+import AsukaSan.jobLancer.domain.response.Client.ResponseUpdUserDTO;
+import AsukaSan.jobLancer.domain.response.Client.ResponseUserDTO;
 import AsukaSan.jobLancer.repository.UserRepository;
 
 @Service
@@ -22,14 +23,20 @@ public class UserService {
     // DI
     private final UserRepository userRepository;
     private final CompanyService companyService;
-    public UserService(UserRepository userRepository, CompanyService companyService){
+    private final RoleService roleService;
+    public UserService(UserRepository userRepository, CompanyService companyService, RoleService roleService){
         this.userRepository = userRepository;
         this.companyService = companyService;
+        this.roleService = roleService;
     }
     public User handleCreateUser(User user){
         if(user.getCompany() != null){
             Optional<Company> comOptional = this.companyService.findCompanyById(user.getCompany().getId());
             user.setCompany(comOptional.isPresent() ? comOptional.get() : null);
+        }
+        if(user.getRole() != null){
+            Optional<Role> roleOptional = this.roleService.fetchRoleById(user.getRole().getId());
+            user.setRole(roleOptional.isPresent() ? roleOptional.get() : null);
         }
         return this.userRepository.save(user);
     }
@@ -52,20 +59,7 @@ public class UserService {
         res.setMeta(mt);
         //remove sensitive data
         List<ResponseUserDTO> listUser = pageCheck.getContent()
-                .stream().map(item -> new ResponseUserDTO(
-                    item.getId(),
-                    item.getEmail(),
-                    item.getName(),
-                    item.getGender(),
-                    item.getAddress(),
-                    item.getAge(),
-                    item.getUpdatedTime(),
-                    item.getCreatedTime(),
-                    new ResponseUserDTO.UserOfCompany(
-                        item.getCompany() != null ? item.getCompany().getId() : 0,
-                        item.getCompany() != null ? item.getCompany().getName() : null
-                    )
-                    ))
+                .stream().map(item -> this.convertToUserDTO(item))
                 .collect(Collectors.toList());
         res.setResult(listUser);
         return res;
@@ -82,13 +76,18 @@ public class UserService {
             currentUser.setGender(reUser.getGender());
             currentUser.setName(reUser.getName());
             currentUser.setAge(reUser.getAge());
-            //save to update
-            currentUser = this.userRepository.save(currentUser);
+            
             //Is the company still alive
             if(reUser.getCompany() != null){
                 Optional<Company> comOptional = this.companyService.findCompanyById(reUser.getId());
-                reUser.setCompany(comOptional.isPresent() ? comOptional.get() : null);
+                currentUser.setCompany(comOptional.isPresent() ? comOptional.get() : null);
             }
+            if(reUser.getRole() != null){
+                Optional<Role> roleOptional = this.roleService.fetchRoleById(reUser.getRole().getId());
+                currentUser.setRole(roleOptional.isPresent() ? roleOptional.get() : null);
+            }
+            //save to update
+            currentUser = this.userRepository.save(currentUser);
         }
         return currentUser;
     }
@@ -143,10 +142,16 @@ public class UserService {
     public ResponseUserDTO convertToUserDTO(User user){
         ResponseUserDTO res = new ResponseUserDTO();
         ResponseUserDTO.UserOfCompany userRoot = new ResponseUserDTO.UserOfCompany();
+        ResponseUserDTO.RoleOfUser userRole = new ResponseUserDTO.RoleOfUser();
         if(user.getCompany() != null){
             userRoot.setId(user.getCompany().getId());
             userRoot.setName(user.getCompany().getName());
             res.setCompany(userRoot);
+        }
+        if(user.getRole() != null){
+            userRole.setId(user.getRole().getId());
+            userRole.setName(user.getRole().getName());
+            res.setRole(userRole);
         }
         res.setId(user.getId());
         res.setEmail(user.getEmail());

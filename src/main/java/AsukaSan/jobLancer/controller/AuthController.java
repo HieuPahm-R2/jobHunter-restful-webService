@@ -2,12 +2,14 @@ package AsukaSan.jobLancer.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import AsukaSan.jobLancer.domain.User;
 import AsukaSan.jobLancer.domain.request.RequestLoginDTO;
 import AsukaSan.jobLancer.domain.response.ResponseLoginDTO;
+import AsukaSan.jobLancer.domain.response.Client.ResponseCreUserDTO;
 import AsukaSan.jobLancer.service.UserService;
 import AsukaSan.jobLancer.utils.SecurityUtils;
 import AsukaSan.jobLancer.utils.anotation.MessageApi;
@@ -35,15 +38,17 @@ public class AuthController {
     private final SecurityUtils securityUtils;
     private final UserService userService;
     private AuthenticationManagerBuilder authenticationManagerBuilder;
+        private final PasswordEncoder passwordEncoder;
 
     public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder,
-    SecurityUtils securityUtils, UserService userService){
+    SecurityUtils securityUtils, UserService userService,PasswordEncoder passwordEncoder){
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtils = securityUtils;
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<ResponseLoginDTO> login(@Valid @RequestBody RequestLoginDTO loginDTO) {
         UsernamePasswordAuthenticationToken authenticationToken
         = new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
@@ -55,10 +60,13 @@ public class AuthController {
         User userFetchDB = this.userService.handleGetUserByUsername(loginDTO.getUsername());
         if(userFetchDB != null){
             ResponseLoginDTO.LoginUser userLog = new ResponseLoginDTO.LoginUser(
-                userFetchDB.getId(), userFetchDB.getEmail(), userFetchDB.getName());
+                userFetchDB.getId(), 
+                userFetchDB.getEmail(), 
+                userFetchDB.getName(), 
+                userFetchDB.getRole());
             resDto.setUser(userLog);
         }
-        String access_token = this.securityUtils.generateAccessToken(authentication.getName(), resDto.getUser());
+        String access_token = this.securityUtils.generateAccessToken(authentication.getName(), resDto);
         
         resDto.setAccessToken(access_token);
         String refresh_token = this.securityUtils.generateRefreshToken(loginDTO.getUsername(), resDto);
@@ -87,6 +95,7 @@ public class AuthController {
              userLog.setId(userFetchDB.getId());
              userLog.setEmail(userFetchDB.getEmail());
              userLog.setName(userFetchDB.getName());
+             userLog.setRole(userFetchDB.getRole());
              getAccountUser.setUser(userLog);
         }
         return ResponseEntity.ok().body(getAccountUser);
@@ -94,7 +103,10 @@ public class AuthController {
 
     @GetMapping("/auth/refresh")
     @MessageApi("Get User by refresh token")
-    public  ResponseEntity<ResponseLoginDTO> getRefreshToken(@CookieValue(name="refresh-token")String refreshToken) throws IdInvalidException{
+    public  ResponseEntity<ResponseLoginDTO> getRefreshToken(@CookieValue(name="refresh_token",  defaultValue = "abc")String refreshToken) throws IdInvalidException{
+        if (refreshToken.equals("abc")) {
+            throw new IdInvalidException("Bạn không có refresh token ở cookie");
+        }
         // running check valid
         Jwt correctToken = this.securityUtils.confirmValidRefreshToken(refreshToken);
         String email = correctToken.getSubject();
@@ -107,10 +119,10 @@ public class AuthController {
         User userFetchDB = this.userService.handleGetUserByUsername(email);
         if(userFetchDB != null){
             ResponseLoginDTO.LoginUser userLog = new ResponseLoginDTO.LoginUser(
-                userFetchDB.getId(), userFetchDB.getEmail(), userFetchDB.getName());
+                userFetchDB.getId(), userFetchDB.getEmail(), userFetchDB.getName(), userFetchDB.getRole());
             resDto.setUser(userLog);
         }
-        String access_token = this.securityUtils.generateAccessToken(email, resDto.getUser());
+        String access_token = this.securityUtils.generateAccessToken(email, resDto);
 
         resDto.setAccessToken(access_token);
         // generate again refresh token
@@ -148,5 +160,19 @@ public class AuthController {
         return ResponseEntity.ok()
         .header(HttpHeaders.SET_COOKIE , removeSpringCookies.toString())
         .body(null);
+    }
+    // Register action
+    @PostMapping("/auth/register")
+    @MessageApi("Create new User action")
+    public ResponseEntity<ResponseCreUserDTO> registerHandle(@Valid @RequestBody User userFromPostMan) throws IdInvalidException {
+        if(this.userService.handleCheckEmailExist(userFromPostMan.getEmail())){
+            throw new IdInvalidException(
+                "Email: " + userFromPostMan.getEmail() + " đã tồn tại, hãy thử email khác"
+            );
+        }
+        String hashPassword = this.passwordEncoder.encode(userFromPostMan.getPassWord());
+        userFromPostMan.setPassWord(hashPassword);
+        User regisUser = this.userService.handleCreateUser(userFromPostMan);
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToResCreUserDTO(regisUser));
     }
 }

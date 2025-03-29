@@ -10,7 +10,7 @@ import AsukaSan.jobLancer.domain.Skill;
 
 @Repository
 public interface SkillRepository extends JpaRepository<Skill,Long>, JpaSpecificationExecutor<Skill> {
-    boolean existsByName(String name);
+    boolean existsByTitle(String title);
 
-    List<Skill> findByIdList(List<Long> id);
+    List<Skill> findByIdIn(List<Long> id);
 }

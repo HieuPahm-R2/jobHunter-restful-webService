@@ -1,15 +1,15 @@
-package AsukaSan.jobLancer.domain.response;
+package AsukaSan.jobLancer.domain.response.Client;
 
 import java.time.Instant;
 
-import AsukaSan.jobLancer.domain.response.ResponseCreUserDTO.UserOfCompany;
 import AsukaSan.jobLancer.utils.constant.GenderEnum;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class ResponseUpdUserDTO {
+public class ResponseCreUserDTO {
+
     private long id;
     private String name;
     private String email;

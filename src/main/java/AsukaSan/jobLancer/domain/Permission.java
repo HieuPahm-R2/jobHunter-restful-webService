@@ -6,18 +6,12 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import AsukaSan.jobLancer.utils.SecurityUtils;
-import AsukaSan.jobLancer.utils.constant.GenderEnum;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -26,47 +20,31 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name="users")
 @Getter
 @Setter
-public class User {
+@Table(name = "permissions")
+public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @NotBlank(message = "Not to blank this field")
     private String name;
-    @NotBlank(message = "Email not be blank..")
-    private String email;
-    @NotBlank(message = "Password not be blank..")
-    private String passWord;
-    private int age;
+    @NotBlank(message = "Not to blank this field")
+    private String apiPath;
+    @NotBlank(message = "Not to blank this field")
+    private String method;
+    @NotBlank(message = "Not to blank this field")
+    private String module;
 
-    @Enumerated(EnumType.STRING)
-    private GenderEnum gender;
-
-    private String address;
-    @Column(columnDefinition = "MEDIUMTEXT")
-    private String refreshToken;
-    
     private Instant createdTime;
     private Instant updatedTime;
-
     private String createdBy;
     private String updatedBy;
-    // db query
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    private Company company;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "permissions")
     @JsonIgnore
-    List<Resume> resumes;
-
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
-
-    //===============
+    private List<Role> roles;
 
     @PrePersist
     public void handleBeforeCreate() {
@@ -80,5 +58,4 @@ public class User {
         SecurityUtils.getCurrentUserLogin().get() : " ";
         this.updatedTime = Instant.now();
     }
-    
 }

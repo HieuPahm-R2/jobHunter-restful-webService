@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,9 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.turkraft.springfilter.boot.Filter;
+
 import AsukaSan.jobLancer.domain.Company;
 import AsukaSan.jobLancer.domain.response.PaginationResultDTO;
 import AsukaSan.jobLancer.service.CompanyService;
+import AsukaSan.jobLancer.utils.anotation.MessageApi;
+import AsukaSan.jobLancer.utils.error.IdInvalidException;
 import jakarta.validation.Valid;
 
 @RestController
@@ -38,17 +43,22 @@ public class CompanyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newCompany);
     }
 
+    @GetMapping("/company/{id}")
+    @MessageApi("Fetch only company with id")
+    public ResponseEntity<Company> handleFetch(@PathVariable("id") long id) throws IdInvalidException{
+        Optional<Company> resOptional = this.companyService.findCompanyById(id);
+        if(resOptional == null){
+            throw new IdInvalidException("Không tông tại công ty này!!");
+        }
+        return ResponseEntity.ok().body(resOptional.get());
+    }
+
     @GetMapping("/companies")
+    @MessageApi("Fetch all companies")
     public ResponseEntity<PaginationResultDTO > getAllCompanies(
-        @RequestParam("currentPage") Optional<String> currentOptional,
-        @RequestParam("pageSize") Optional<String> pageSizeOptional
+        @Filter Specification<Company> spec, Pageable pageable
     ){
-        String sCurrent = currentOptional.isPresent() ? currentOptional.get() : "";
-        String sPageSize = pageSizeOptional.isPresent() ? pageSizeOptional.get() : "";
-        int currentPage = Integer.parseInt(sCurrent);
-        int pageSize = Integer.parseInt(sPageSize);
-        Pageable pageable = PageRequest.of(currentPage - 1,pageSize);
-        return ResponseEntity.status(HttpStatus.OK).body(this.companyService.fetchAllCompanies(pageable)) ;
+        return ResponseEntity.status(HttpStatus.OK).body(this.companyService.fetchAllCompanies(spec, pageable)) ;
     }
 
     @PutMapping("/companies")

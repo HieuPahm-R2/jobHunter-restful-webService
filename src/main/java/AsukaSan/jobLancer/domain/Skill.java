@@ -47,8 +47,8 @@ public class Skill {
     }
     @PreUpdate
     public void handleBeforeUpdate() {
-        this.createdBy = SecurityUtils.getCurrentUserLogin().isPresent() == true ?
+        this.updatedBy = SecurityUtils.getCurrentUserLogin().isPresent() == true ?
         SecurityUtils.getCurrentUserLogin().get() : " ";
-        this.createdTime = Instant.now();
+        this.updatedTime = Instant.now();
     }
 }

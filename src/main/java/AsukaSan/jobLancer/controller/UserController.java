@@ -2,7 +2,6 @@ package AsukaSan.jobLancer.controller;
 
 import java.util.Optional;
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -21,9 +20,9 @@ import com.turkraft.springfilter.boot.Filter;
 
 import AsukaSan.jobLancer.domain.User;
 import AsukaSan.jobLancer.domain.response.PaginationResultDTO;
-import AsukaSan.jobLancer.domain.response.ResponseCreUserDTO;
-import AsukaSan.jobLancer.domain.response.ResponseUpdUserDTO;
-import AsukaSan.jobLancer.domain.response.ResponseUserDTO;
+import AsukaSan.jobLancer.domain.response.Client.ResponseCreUserDTO;
+import AsukaSan.jobLancer.domain.response.Client.ResponseUpdUserDTO;
+import AsukaSan.jobLancer.domain.response.Client.ResponseUserDTO;
 import AsukaSan.jobLancer.service.UserService;
 import AsukaSan.jobLancer.utils.anotation.MessageApi;
 import AsukaSan.jobLancer.utils.error.IdInvalidException;
@@ -72,6 +71,7 @@ public class UserController {
         this.userService.deleteUserById(id);
         return ResponseEntity.ok(null);
     }
+    //get all users
     @GetMapping("/users")
     @MessageApi("Fetch All Users action")
     public ResponseEntity<PaginationResultDTO> getAllUsersInfo(
