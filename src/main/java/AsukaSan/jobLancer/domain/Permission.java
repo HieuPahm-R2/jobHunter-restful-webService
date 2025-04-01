@@ -17,12 +17,14 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "permissions")
+@NoArgsConstructor
 public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +38,13 @@ public class Permission {
     private String method;
     @NotBlank(message = "Not to blank this field")
     private String module;
+    // handle for Auto create new user with sample permission
+    public Permission(String name, String apiPath, String method, String module){
+        this.name = name;
+        this.apiPath = apiPath;
+        this.method = method;
+        this.module = module;
+    }
 
     private Instant createdTime;
     private Instant updatedTime;
