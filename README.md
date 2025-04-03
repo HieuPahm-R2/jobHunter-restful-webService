@@ -10,7 +10,7 @@ For further reference, please consider the following sections:
 * [Thymeleaf]
 * [Validation]
 * [OAuth2 Resource Server]
-  --------------
+
 ###Frontend:
 * React + Vite | Typescript
 * Redux toolkit, React Router v6
