@@ -21,7 +21,7 @@ public class UserDetailConfig implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         AsukaSan.jobLancer.domain.User user = this.userService.handleGetUserByUsername(username);
-        return new User(user.getEmail(), user.getPassWord(), Collections.singletonList(new SimpleGrantedAuthority("ROLE-User")));
+        return new User(user.getEmail(), user.getPassword(), Collections.singletonList(new SimpleGrantedAuthority("ROLE-User")));
     }
     
 }

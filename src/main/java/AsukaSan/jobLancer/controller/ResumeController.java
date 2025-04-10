@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.turkraft.springfilter.boot.Filter;
@@ -36,6 +37,7 @@ import AsukaSan.jobLancer.utils.error.IdInvalidException;
 import jakarta.validation.Valid;
 
 @RestController
+@RequestMapping("/api/v1")
 public class ResumeController {
     private final ResumeService resumeService;
     private final UserService userService;
@@ -60,7 +62,7 @@ public class ResumeController {
          return ResponseEntity.status(HttpStatus.CREATED).body(this.resumeService.handleCreate(dataClient));
     }
     // Update
-    @PutMapping("/jobs")
+    @PutMapping("/resumes")
     @MessageApi("Edit and update")
     public ResponseEntity<ResUpdateCvDTO> handleUpdate(@RequestBody Resume dataClient) throws IdInvalidException{
         Optional<Resume> optionRes = this.resumeService.findResumeById(dataClient.getId());
@@ -71,7 +73,7 @@ public class ResumeController {
         return ResponseEntity.ok().body(this.resumeService.convertUpdateDto(resFinal));
     }
     // Delete
-    @DeleteMapping("/jobs/{id}")
+    @DeleteMapping("/resumes/{id}")
     @MessageApi("Delete action")
     public ResponseEntity<Void> handleDelete(@PathVariable("id") long id) throws IdInvalidException{
         Optional<Resume> optionRes = this.resumeService.findResumeById(id);
@@ -84,7 +86,7 @@ public class ResumeController {
     //===================================
 
     //FETCH RESUME
-    @GetMapping("/jobs/{id}")
+    @GetMapping("/resumes/{id}")
     @MessageApi("Fetch something")
     public ResponseEntity<ResFetchCvDTO> handleFetchOnly(@PathVariable("id") long id) throws IdInvalidException{
         Optional<Resume> optional = this.resumeService.findResumeById(id);
@@ -94,7 +96,7 @@ public class ResumeController {
         Resume resume = this.resumeService.findResumeById(id).get();
         return ResponseEntity.ok().body(this.resumeService.convertFetchDto(resume));
     }
-    @GetMapping("/jobs")
+    @GetMapping("/resumes")
     @MessageApi("Fetch all ")
     public ResponseEntity<PaginationResultDTO> handleFetchAll(@Filter Specification<Resume> spec, Pageable pageable){
         List<Long> arrJobsId = null;

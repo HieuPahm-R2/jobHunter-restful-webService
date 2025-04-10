@@ -38,7 +38,7 @@ public class User {
     @NotBlank(message = "Email not be blank..")
     private String email;
     @NotBlank(message = "Password not be blank..")
-    private String passWord;
+    private String password;
     private int age;
 
     @Enumerated(EnumType.STRING)

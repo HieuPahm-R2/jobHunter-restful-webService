@@ -41,6 +41,7 @@ public class SkillService {
         Optional<Skill> skOptional = this.skillRepository.findById(id);
         Skill curSkill = skOptional.get();
         curSkill.getJobs().forEach(x -> x.getSkills().remove(curSkill));
+        curSkill.getSubscribers().forEach(x -> x.getSkills().remove(curSkill));
         //delete
         this.skillRepository.delete(curSkill);
     }

@@ -47,8 +47,8 @@ public class UserController {
                 "Email: " + userFromPostMan.getEmail() + " đã tồn tại, hãy thử email khác"
             );
         }
-        String hashPassword = this.passwordEncoder.encode(userFromPostMan.getPassWord());
-        userFromPostMan.setPassWord(hashPassword);
+        String hashPassword = this.passwordEncoder.encode(userFromPostMan.getPassword());
+        userFromPostMan.setPassword(hashPassword);
         User accUser = this.userService.handleCreateUser(userFromPostMan);
         return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToResCreUserDTO(accUser));
     }

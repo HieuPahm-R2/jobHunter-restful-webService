@@ -72,6 +72,12 @@ public class DatabaseInitializer implements CommandLineRunner {
             arrResult.add(new Permission("Delete a user", "/api/v1/users/{id}","DELETE","USERS"));
             arrResult.add(new Permission("Get a user by id", "/api/v1/users/{id}","GET","USERS"));
             arrResult.add(new Permission("Get users with pagination", "/api/v1/users","GET","USERS"));
+
+            arrResult.add(new Permission("Create a resume", "/api/v1/resumes","POST","RESUMES"));
+            arrResult.add(new Permission("Update a resume", "/api/v1/resumes","PUT","RESUMES"));
+            arrResult.add(new Permission("Delete a resume", "/api/v1/resumes/{id}","DELETE","RESUMES"));
+            arrResult.add(new Permission("Get a resume by id", "/api/v1/resumes/{id}","GET","RESUMES"));
+            arrResult.add(new Permission("Get resumes with pagination", "/api/v1/resumes","GET","RESUMES"));
             
             arrResult.add(new Permission("Create a subscriber", "/api/v1/subscribers","POST","SUBSCRIBERS"));
             arrResult.add(new Permission("Update a subscriber", "/api/v1/subscribers","PUT","SUBSCRIBERS"));
@@ -97,11 +103,11 @@ public class DatabaseInitializer implements CommandLineRunner {
         if(countUser == 0){
             User initUser = new User();
             initUser.setName("Administrator H1");
-            initUser.setEmail("hieu.pt@sis.hust");
+            initUser.setEmail("admin@sis.hust");
             initUser.setAge(20);
             initUser.setGender(GenderEnum.MALE);
             initUser.setAddress("Thai Binh");
-            initUser.setPassWord(this.passwordEncoder.encode("123456"));
+            initUser.setPassword(this.passwordEncoder.encode("123456"));
 
             Role userRole = this.roleRepository.findByName("MAIN_ADMIN");
             if(userRole != null){

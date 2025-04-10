@@ -6,10 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
-import AsukaSan.jobLancer.domain.Job;
-import AsukaSan.jobLancer.domain.Skill;
+import AsukaSan.jobLancer.domain.Subscriber;
 
 @Repository
-public interface JobRepository extends JpaRepository<Job, Long>, JpaSpecificationExecutor<Job>  {
-    List<Job> findBySkillsIn(List<Skill> skills); 
+public interface SubscriberRepository extends JpaRepository<Subscriber, Long>, JpaSpecificationExecutor<Subscriber> {
+    boolean existsByEmail(String email);
+
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.turkraft.springfilter.boot.Filter;
@@ -23,6 +24,7 @@ import AsukaSan.jobLancer.utils.anotation.MessageApi;
 import AsukaSan.jobLancer.utils.error.IdInvalidException;
 
 @RestController
+@RequestMapping("/api/v1")
 public class RoleController {
     private final RoleRepository roleRepository;
     private final RoleService roleService;
