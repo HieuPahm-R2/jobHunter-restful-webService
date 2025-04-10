@@ -10,9 +10,10 @@ For further reference, please consider the following sections:
 * [Thymeleaf]
 * [Validation]
 * [OAuth2 Resource Server]
-  --------------
-  Frontend:
-* React + Vite
+
+### Frontend:
+* React + Vite | Typescript
+* Redux toolkit, React Router v6
   
 
 ### Work Flows
@@ -28,7 +29,4 @@ The following guides illustrate how to use some features concretely:
 * [Building REST services with Spring]
 * [Handling Form Submission]
 * [Validation]
-
-### Additional Links
-These additional references should also help you:
 
