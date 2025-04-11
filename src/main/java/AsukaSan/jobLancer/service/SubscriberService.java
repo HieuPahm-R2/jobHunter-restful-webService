@@ -57,6 +57,10 @@ public class SubscriberService {
         }
         return this.subscriberRepository.save(subDatabase);
     }
+    //
+    public Subscriber findWithEmail(String email){
+        return this.subscriberRepository.findByEmail(email);
+    }
     // ========== Email send with user skill
     public ResEmailJob convertJobToSendEmail(Job job) {
         ResEmailJob res = new ResEmailJob();

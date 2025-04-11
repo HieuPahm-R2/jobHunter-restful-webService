@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import AsukaSan.jobLancer.domain.Subscriber;
 import AsukaSan.jobLancer.service.SubscriberService;
+import AsukaSan.jobLancer.utils.SecurityUtils;
 import AsukaSan.jobLancer.utils.anotation.MessageApi;
 import AsukaSan.jobLancer.utils.error.IdInvalidException;
 
@@ -36,5 +37,13 @@ public class SubscriberController {
             throw new IdInvalidException("Not exist any information about data over there");
         }
         return ResponseEntity.ok().body(this.subscriberService.handleUpdate(subOnDB, dataClient));
+    }
+    // Get skills register
+    @PostMapping("/subscribers/skills")
+    @MessageApi("Get Subscribers' skills")
+    public ResponseEntity<Subscriber> getSubscriberSkill() throws IdInvalidException{
+        String email = SecurityUtils.getCurrentUserLogin().isPresent() == true ? 
+                SecurityUtils.getCurrentUserLogin().get() : "";
+        return ResponseEntity.ok().body(this.subscriberService.findWithEmail(email));
     }
 }
